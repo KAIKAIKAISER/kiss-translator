@@ -3,10 +3,10 @@ import { SEPARATE_WINDOW_CONTENT_WIDTH } from "../../config/app";
 export const POPUP_STYLES = String.raw`
 .kt-popup-shell {
   width: 520px;
-  /* Keep the action popup wide enough for its controls while still fitting
-     narrow browser viewports. A wider single-row layout prevents avoidable
-     wrapping and keeps the complete page-control panel visible in Chrome. */
-  max-width: min(520px, calc(100vw - 8px));
+  /* Constrain against the parent, not the popup's own viewport. Chrome can
+     re-measure an action popup after a scrollbar appears; using viewport units here
+     makes that measurement feed back into the width and causes flashing. */
+  max-width: 100%;
   min-width: 0;
   overflow: visible;
   background: var(--kt-sf0);

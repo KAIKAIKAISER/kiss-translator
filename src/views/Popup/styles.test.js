@@ -9,12 +9,13 @@ describe("toolbar popup sizing", () => {
     )?.[1];
 
     expect(shellRule).toContain("width: 520px");
-    expect(shellRule).toContain("max-width: min(520px, calc(100vw - 8px))");
+    expect(shellRule).toContain("max-width: 100%");
     expect(shellRule).toContain("min-width: 0");
     expect(POPUP_STYLES).not.toMatch(
       /\.kt-popup-shell:not\(\.kt-popup-shell--window\)\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;/
     );
     expect(shellRule).not.toMatch(/max-(?:width|height):\s*100v[wh]/);
+    expect(shellRule).not.toMatch(/100vw|100vh/);
     expect(shellRule).toContain("font-size: 14px");
     expect(shellRule).toContain("line-height: 1.4");
     expect(POPUP_STYLES).toMatch(
