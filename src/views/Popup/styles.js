@@ -2,14 +2,32 @@ import { SEPARATE_WINDOW_CONTENT_WIDTH } from "../../config/app";
 
 export const POPUP_STYLES = String.raw`
 .kt-popup-shell {
-  width: 396px;
-  /* A percentage cap preserves toolbar popup intrinsic sizing; viewport units
-     can lock the browser's initially narrow measurement viewport in place. */
-  max-width: 100%;
+  width: 520px;
+  /* Keep the action popup wide enough for its controls while still fitting
+     narrow browser viewports. A wider single-row layout prevents avoidable
+     wrapping and keeps the complete page-control panel visible in Chrome. */
+  max-width: min(520px, calc(100vw - 8px));
   min-width: 0;
   overflow: visible;
   background: var(--kt-sf0);
   color: var(--kt-on);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.kt-popup-shell,
+.kt-popup-shell button,
+.kt-popup-shell input,
+.kt-popup-shell select,
+.kt-popup-shell textarea {
+  font-family: inherit;
+}
+
+/* MUI's rem-based defaults otherwise drift from the px sizes used by the
+   compact popup controls when the host page changes its root font size. */
+.kt-popup-shell .MuiButton-root,
+.kt-popup-shell .MuiTab-root {
+  font-size: 14px;
 }
 
 /* Fill the separate window while keeping its content centered and readable.
@@ -308,12 +326,16 @@ export const POPUP_STYLES = String.raw`
 .kt-popup-empty__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
 
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-content { gap: 9px; padding: 10px 16px 12px; }
+.kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-header { min-height: 52px; padding-block: 5px; }
+.kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-header__actions .MuiIconButton-root { width: 36px; height: 36px; padding: 6px; }
+.kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-tabs { min-height: 42px; }
+.kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-tabs .MuiTab-root { min-height: 42px; padding-block: 6px; }
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-hero { padding: 12px 14px; border-radius: 16px; }
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-hero__icon { width: 40px; height: 40px; border-radius: 12px; }
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-hero__icon svg { width: 24px; height: 24px; }
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-language { padding: 7px 12px; }
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-section-label { margin-bottom: 5px; }
-.kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-scenes { gap: 6px; }
+.kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-scenes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-scene { padding: 7px 10px; }
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-site { padding: 10px 12px; }
 .kt-popup-shell:not(.kt-popup-shell--window) .kt-popup-site__actions { margin: 7px -2px -2px; }

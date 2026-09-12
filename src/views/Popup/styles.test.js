@@ -1,20 +1,25 @@
 import { POPUP_STYLES } from "./styles";
 import { getCssAtRuleBodies } from "../../styles/testUtils";
 
-describe("Safari popup sizing", () => {
-  test("keeps an intrinsic preferred width within the available container", () => {
+describe("toolbar popup sizing", () => {
+  test("uses a wider fixed layout within the available container", () => {
     const shellRule = POPUP_STYLES.match(/\.kt-popup-shell\s*\{([^}]*)\}/)?.[1];
     const scrollRule = POPUP_STYLES.match(
       /\.kt-popup-scroll\s*\{([^}]*)\}/
     )?.[1];
 
-    expect(shellRule).toContain("width: 396px");
-    expect(shellRule).toContain("max-width: 100%");
+    expect(shellRule).toContain("width: 520px");
+    expect(shellRule).toContain("max-width: min(520px, calc(100vw - 8px))");
     expect(shellRule).toContain("min-width: 0");
     expect(POPUP_STYLES).not.toMatch(
       /\.kt-popup-shell:not\(\.kt-popup-shell--window\)\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;/
     );
     expect(shellRule).not.toMatch(/max-(?:width|height):\s*100v[wh]/);
+    expect(shellRule).toContain("font-size: 14px");
+    expect(shellRule).toContain("line-height: 1.4");
+    expect(POPUP_STYLES).toMatch(
+      /\.kt-popup-shell \.MuiButton-root,[\s\S]*?\.kt-popup-shell \.MuiTab-root\s*\{[^}]*font-size:\s*14px;/
+    );
     expect(scrollRule).toContain("height: auto");
     expect(scrollRule).toContain("overflow: visible");
     expect(scrollRule).not.toContain("100vh");
@@ -35,6 +40,9 @@ describe("Safari popup sizing", () => {
     );
     expect(POPUP_STYLES).toMatch(
       /\.kt-popup-main-switch \.MuiSwitch-switchBase\.Mui-checked \+ \.MuiSwitch-track\s*\{[^}]*background:\s*var\(--kt-pri\);/
+    );
+    expect(POPUP_STYLES).toMatch(
+      /\.kt-popup-shell:not\(\.kt-popup-shell--window\) \.kt-popup-scenes\s*\{[^}]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\);/
     );
     expect(POPUP_STYLES).toMatch(
       /\.kt-popup-main-switch \.MuiSwitch-input\s*\{[^}]*left:\s*0;[^}]*width:\s*46px;[^}]*height:\s*28px;/
