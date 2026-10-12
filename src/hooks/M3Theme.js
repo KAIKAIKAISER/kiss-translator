@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline, GlobalStyles } from "@mui/material";
-import { useDarkMode, useThemeStyle } from "./ColorMode";
+import { useDarkMode } from "./ColorMode";
 import {
   THEME_DARK,
   THEME_LIGHT,
@@ -38,8 +38,7 @@ export default function M3Theme({
   styles = EMPTY_GLOBAL_STYLES,
   themeStyle: propThemeStyle,
 }) {
-  const { themeStyle: settingThemeStyle } = useThemeStyle();
-  const { darkMode } = useDarkMode();
+  const { darkMode, themeStyle: modeThemeStyle } = useDarkMode();
   const systemPrefersDark = useSystemDarkPreference();
 
   const previewThemeStyle =
@@ -47,7 +46,7 @@ export default function M3Theme({
       ? new URLSearchParams(window.location.search).get("themeStyle")
       : null;
   const activeThemeStyle =
-    propThemeStyle || previewThemeStyle || settingThemeStyle || THEME_STYLE_M3;
+    propThemeStyle || previewThemeStyle || modeThemeStyle || THEME_STYLE_M3;
   const isReadFrog = activeThemeStyle === THEME_STYLE_READFROG;
 
   const previewMode =
