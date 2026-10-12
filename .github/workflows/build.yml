@@ -8,6 +8,8 @@ on:
       - "feature/**"
       - "feat/**"
       - "fix/**"
+    tags:
+      - "v*"
   pull_request:
   workflow_dispatch:
 
@@ -15,6 +17,8 @@ jobs:
   build:
     name: Build & Package Extensions
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -72,3 +76,14 @@ jobs:
           name: kiss-translator-firefox
           path: dist-artifacts/kiss-translator-firefox.zip
           retention-days: 30
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist-artifacts/kiss-translator-chrome.zip
+            dist-artifacts/kiss-translator-chrome-unpacked.zip
+            dist-artifacts/kiss-translator-firefox.zip
+          name: KISS Translator ${{ github.ref_name }} (Read Frog Theme)
+          generate_release_notes: true
