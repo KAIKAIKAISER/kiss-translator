@@ -259,12 +259,18 @@ export const DEFAULT_MOUSE_HOVER_SETTING = {
   bubbleStyle: DEFAULT_MOUSE_HOVER_BUBBLE_STYLE, // 气泡模式的容器 CSS
 };
 
+// --- 界面主题风格配置 ---
+export const THEME_STYLE_M3 = "m3"; // 原版 Material 3 风格
+export const THEME_STYLE_READFROG = "readfrog"; // Read Frog 视觉风格
+export const THEME_STYLE_ALL = [THEME_STYLE_M3, THEME_STYLE_READFROG];
+
 // --- 全局默认设置对象，存储于 local storage ---
 export const DEFAULT_SETTING = {
   version: CURRENT_SETTINGS_VERSION,
   // 输入框拉伸手柄样式（14 选 1，见 StylesSetting 页说明）
   textareaGripStyle: "concentric-smooth",
   darkMode: "auto", // 主题外观模式 ("light" 浅色, "dark" 深色, "auto" 跟随浏览器系统)
+  themeStyle: THEME_STYLE_M3, // 界面视觉风格 ("m3" 原版 Material 3, "readfrog" Read Frog 风格)
   uiLang: "en", // 插件设置面板界面的显示语言
   // fetchLimit: DEFAULT_FETCH_LIMIT, // 最大任务数量(移至rule，作废)
   // fetchInterval: DEFAULT_FETCH_INTERVAL, // 任务间隔时间(移至rule，作废)

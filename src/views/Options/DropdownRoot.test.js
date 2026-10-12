@@ -11,6 +11,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 jest.mock("../../hooks/ColorMode", () => ({
   useDarkMode: () => ({ darkMode: "light" }),
+  useThemeStyle: () => ({ themeStyle: "m3" }),
 }));
 jest.mock("../../hooks/SystemColorScheme", () => ({
   useSystemDarkPreference: () => false,

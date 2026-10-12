@@ -645,5 +645,9 @@ export const RU_I18N = {
   grip_style_percent_style: `Стиль «процент»`,
   grip_style_orbit_satellite: `Спутник на орбите`,
   grip_style_hidden: `Скрыт (стандартное изменение размера)`,
+  settings_theme_style: `Стиль темы`,
+  settings_theme_style_description: `Переключение между визуальными темами Material 3 и Read Frog`,
+  settings_theme_style_m3: `Material 3 (по умолчанию)`,
+  settings_theme_style_readfrog: `Стиль Read Frog`,
   close: `Закрыть`,
 };

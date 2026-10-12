@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useSetting } from "./Setting";
+import { THEME_STYLE_M3 } from "../config";
 
 /**
  * 深色模式状态切换与管理自定义 Hook
@@ -23,4 +24,18 @@ export function useDarkMode() {
   }, [darkMode, updateSetting]);
 
   return { darkMode, toggleDarkMode };
+}
+
+/**
+ * 主题风格状态与管理自定义 Hook
+ * @returns {object} { themeStyle: string, updateThemeStyle: function }
+ */
+export function useThemeStyle() {
+  const { setting, updateSetting } = useSetting();
+  const themeStyle = setting?.themeStyle || THEME_STYLE_M3;
+  const updateThemeStyle = useCallback(
+    (style) => updateSetting({ themeStyle: style }),
+    [updateSetting]
+  );
+  return { themeStyle, updateThemeStyle };
 }

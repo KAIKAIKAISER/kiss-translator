@@ -1,8 +1,13 @@
 import { useMemo } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline, GlobalStyles } from "@mui/material";
-import { useDarkMode } from "./ColorMode";
-import { THEME_DARK, THEME_LIGHT } from "../config";
+import { useDarkMode, useThemeStyle } from "./ColorMode";
+import {
+  THEME_DARK,
+  THEME_LIGHT,
+  THEME_STYLE_M3,
+  THEME_STYLE_READFROG,
+} from "../config";
 import {
   createM3CssVariables,
   M3_FONT_FAMILY,
@@ -10,10 +15,18 @@ import {
   resolveM3Colors,
   resolveM3ThemeMode,
 } from "../styles/m3";
+import {
+  createReadFrogCssVariables,
+  createReadFrogThemeOptions,
+  READFROG_FONT_FAMILY,
+  READFROG_GLOBAL_CSS,
+  resolveReadFrogColors,
+} from "../styles/readfrog";
 import { getMuiSwitchStyleOverrides } from "./themeStyles";
 import { useSystemDarkPreference } from "./SystemColorScheme";
 
 export { getMuiSwitchStyleOverrides } from "./themeStyles";
+export { THEME_STYLE_M3, THEME_STYLE_READFROG };
 
 const EMPTY_THEME_OPTIONS = Object.freeze({});
 const EMPTY_GLOBAL_STYLES = Object.freeze({});
@@ -23,9 +36,19 @@ export default function M3Theme({
   children,
   options = EMPTY_THEME_OPTIONS,
   styles = EMPTY_GLOBAL_STYLES,
+  themeStyle: propThemeStyle,
 }) {
+  const { themeStyle: settingThemeStyle } = useThemeStyle();
   const { darkMode } = useDarkMode();
   const systemPrefersDark = useSystemDarkPreference();
+
+  const previewThemeStyle =
+    process.env.NODE_ENV === "development"
+      ? new URLSearchParams(window.location.search).get("themeStyle")
+      : null;
+  const activeThemeStyle =
+    propThemeStyle || previewThemeStyle || settingThemeStyle || THEME_STYLE_M3;
+  const isReadFrog = activeThemeStyle === THEME_STYLE_READFROG;
 
   const previewMode =
     process.env.NODE_ENV === "development"
@@ -36,16 +59,24 @@ export default function M3Theme({
       ? previewMode
       : resolveM3ThemeMode(darkMode, systemPrefersDark);
   const colors = useMemo(
-    () => resolveM3Colors(resolvedMode, M3_BRAND_COLOR),
-    [resolvedMode]
+    () =>
+      isReadFrog
+        ? resolveReadFrogColors(resolvedMode)
+        : resolveM3Colors(resolvedMode, M3_BRAND_COLOR),
+    [isReadFrog, resolvedMode]
   );
 
   const theme = useMemo(() => {
     const color = colors;
-    const focusRing = {
-      outline: `3px solid ${color.primary}`,
-      outlineOffset: 2,
-    };
+    const focusRing = isReadFrog
+      ? {
+          outline: `2px solid ${color.primary}`,
+          outlineOffset: 2,
+        }
+      : {
+          outline: `3px solid ${color.primary}`,
+          outlineOffset: 2,
+        };
     let htmlFontSize = 16;
     try {
       htmlFontSize = Number.parseInt(
@@ -54,6 +85,45 @@ export default function M3Theme({
       );
     } catch (_error) {
       htmlFontSize = 16;
+    }
+
+    if (isReadFrog) {
+      const baseOptions = createReadFrogThemeOptions(
+        color,
+        resolvedMode,
+        focusRing
+      );
+      const readFrogThemeOptions = {
+        ...baseOptions,
+        typography: (palette) => {
+          const typography =
+            typeof options.typography === "function"
+              ? options.typography(palette)
+              : options.typography;
+          return {
+            htmlFontSize,
+            fontFamily: READFROG_FONT_FAMILY,
+            ...typography,
+            button: {
+              textTransform: "none",
+              fontWeight: 550,
+              ...typography?.button,
+            },
+          };
+        },
+        components: {
+          ...baseOptions.components,
+          ...(options.components || {}),
+        },
+        ...Object.fromEntries(
+          Object.entries(options).filter(
+            ([key]) => key !== "components" && key !== "typography"
+          )
+        ),
+      };
+      return createTheme(readFrogThemeOptions, {
+        components: options.components || {},
+      });
     }
 
     const themeOptions = {
@@ -412,22 +482,25 @@ export default function M3Theme({
       ),
     };
     return createTheme(themeOptions, { components: options.components || {} });
-  }, [colors, options, resolvedMode]);
+  }, [colors, isReadFrog, options, resolvedMode]);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <GlobalStyles styles={styles} />
       <div
-        className="kt-m3-root"
+        className={isReadFrog ? "kt-m3-root kt-readfrog-root" : "kt-m3-root"}
         data-theme={resolvedMode}
-        data-brand={M3_BRAND_COLOR}
+        data-brand={isReadFrog ? "readfrog" : M3_BRAND_COLOR}
+        data-theme-style={isReadFrog ? "readfrog" : "m3"}
         style={{
-          ...createM3CssVariables(colors),
+          ...(isReadFrog
+            ? createReadFrogCssVariables(colors)
+            : createM3CssVariables(colors)),
           colorScheme: resolvedMode,
         }}
       >
-        <style>{M3_GLOBAL_CSS}</style>
+        <style>{isReadFrog ? READFROG_GLOBAL_CSS : M3_GLOBAL_CSS}</style>
         {children}
       </div>
     </ThemeProvider>

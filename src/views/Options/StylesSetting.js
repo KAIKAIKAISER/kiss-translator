@@ -24,6 +24,7 @@ import { getRandomQuote } from "../../config/quotes";
 import { useSetting } from "../../hooks/Setting";
 import { GripGlyph } from "../../components/TextareaResizeGrip";
 import { TEXTAREA_GRIP_STYLE_KEYS } from "../../config/textareaGripStyles";
+import { THEME_STYLE_M3, THEME_STYLE_READFROG } from "../../config";
 import { useTextareaGripStyle } from "../../hooks/useTextareaHeightLock";
 import {
   SettingsCard,
@@ -292,6 +293,26 @@ export default function StylesSetting() {
     <Box>
       <SettingsSection title={i18n("settings_interface_theme")}>
         <SettingsCard>
+          <SettingsRow
+            label={i18n("settings_theme_style")}
+            description={i18n("settings_theme_style_description")}
+          >
+            <SettingsSegmented
+              value={setting.themeStyle || THEME_STYLE_M3}
+              label={i18n("settings_theme_style")}
+              onChange={(value) => updateSetting({ themeStyle: value })}
+              items={[
+                {
+                  value: THEME_STYLE_M3,
+                  label: i18n("settings_theme_style_m3"),
+                },
+                {
+                  value: THEME_STYLE_READFROG,
+                  label: i18n("settings_theme_style_readfrog"),
+                },
+              ]}
+            />
+          </SettingsRow>
           <SettingsRow label={i18n("settings_appearance_mode")}>
             <SettingsSegmented
               value={darkMode}

@@ -1,0 +1,74 @@
+name: Build Browser Extensions
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+      - "feature/**"
+      - "feat/**"
+      - "fix/**"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Package Extensions
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run automated tests
+        run: pnpm test -- --watchAll=false --passWithNoTests
+
+      - name: Build Chrome extension
+        run: pnpm build:chrome
+
+      - name: Build Firefox extension
+        run: pnpm build:firefox
+
+      - name: Create installable extension ZIP archives
+        shell: bash
+        run: |
+          mkdir -p dist-artifacts
+
+          # 1. Package Chrome extension (standard folder and flat unpackable)
+          (cd build && npx bestzip ../dist-artifacts/kiss-translator-chrome.zip chrome)
+          (cd build/chrome && npx bestzip ../../dist-artifacts/kiss-translator-chrome-unpacked.zip *)
+
+          # 2. Package Firefox extension (flat structure required for Firefox addon installation)
+          (cd build/firefox && npx bestzip ../../dist-artifacts/kiss-translator-firefox.zip *)
+
+          ls -lh dist-artifacts/
+
+      - name: Upload Chrome Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kiss-translator-chrome
+          path: |
+            dist-artifacts/kiss-translator-chrome.zip
+            dist-artifacts/kiss-translator-chrome-unpacked.zip
+          retention-days: 30
+
+      - name: Upload Firefox Extension Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kiss-translator-firefox
+          path: dist-artifacts/kiss-translator-firefox.zip
+          retention-days: 30

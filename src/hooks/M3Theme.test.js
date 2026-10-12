@@ -12,6 +12,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 jest.mock("./ColorMode", () => ({
   useDarkMode: () => ({ darkMode: "auto" }),
+  useThemeStyle: () => ({ themeStyle: "m3" }),
 }));
 jest.mock("./SystemColorScheme", () => ({
   useSystemDarkPreference: () => true,
@@ -288,6 +289,36 @@ test("partial component options preserve M3 button defaults and focus treatment"
       outline: "3px solid #A8C7FA",
       outlineOffset: 2,
     });
+  } finally {
+    act(() => root.unmount());
+    container.remove();
+  }
+});
+
+test("renders with Read Frog theme styling when themeStyle is readfrog", () => {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
+
+  try {
+    act(() => {
+      root.render(
+        <M3Theme themeStyle="readfrog">
+          <Button>Action</Button>
+          <ThemeProbe />
+        </M3Theme>
+      );
+    });
+
+    const themeRoot = container.querySelector(".kt-m3-root");
+    expect(themeRoot.classList.contains("kt-readfrog-root")).toBe(true);
+    expect(themeRoot.dataset.themeStyle).toBe("readfrog");
+    expect(themeRoot.style.getPropertyValue("--rf-radius")).toBe("10px");
+    expect(themeRoot.style.getPropertyValue("--kt-pri")).toBe("#60A5FA");
+    expect(capturedTheme.shape.borderRadius).toBe(10);
+    expect(capturedTheme.components.MuiButton.styleOverrides.root.borderRadius).toBe(8);
+    expect(capturedTheme.components.MuiCard.styleOverrides.root.borderRadius).toBe(12);
+    expect(capturedTheme.components.MuiSwitch.styleOverrides.root.width).toBe(44);
   } finally {
     act(() => root.unmount());
     container.remove();
