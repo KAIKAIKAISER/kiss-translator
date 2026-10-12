@@ -341,7 +341,7 @@ export default function useSelectionController({
     (snapshot) => {
       if (!snapshot?.text) return;
 
-      if (tranboxSetting?.adaptiveSize !== false && setBoxSize) {
+      if (tranboxSetting?.adaptiveSize && setBoxSize) {
         const targetSize = getAdaptiveTranBoxSize(snapshot.text, {
           simpleStyle: tranboxSetting?.simpleStyle,
         });
@@ -452,7 +452,7 @@ export default function useSelectionController({
 
       if (snapshot.rect && followSelection) {
         const targetSize =
-          tranboxSetting?.adaptiveSize !== false
+          tranboxSetting?.adaptiveSize && setBoxSize
             ? getAdaptiveTranBoxSize(snapshot.text, {
                 simpleStyle: tranboxSetting?.simpleStyle,
               })
@@ -611,7 +611,7 @@ export default function useSelectionController({
 
     if (snapshot.rect && followSelection) {
       const targetSize =
-        tranboxSetting?.adaptiveSize !== false
+        tranboxSetting?.adaptiveSize && setBoxSize
           ? getAdaptiveTranBoxSize(snapshot.text, {
               simpleStyle: tranboxSetting?.simpleStyle,
             })
