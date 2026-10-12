@@ -1126,7 +1126,7 @@ export default function PopupCont({
         </div>
         <button
           type="button"
-          className={`kt-popup-option-row kt-popup-option-row--always${isDirty("transOpen") ? " kt-popup-option-row--dirty" : ""}`}
+          className={`kt-popup-always-row${isDirty("transOpen") ? " kt-popup-always-row--dirty" : ""}`}
           role="switch"
           aria-label={fieldLabels.transOpen}
           aria-checked={enabledValue(rule?.transOpen)}

@@ -1791,6 +1791,7 @@ describe("PopupCont capability parity", () => {
           ...view.container.querySelectorAll(
             '.kt-popup-option-row[role="switch"]'
           ),
+          view.container.querySelector(".kt-popup-always-row"),
         ].every((row) => row.disabled)
       ).toBe(true);
       expect(
@@ -2071,7 +2072,7 @@ describe("PopupCont capability parity", () => {
     try {
       await flushEffects();
       const alwaysToggle = view.container.querySelector(
-        ".kt-popup-option-row--always"
+        ".kt-popup-always-row"
       );
       expect(alwaysToggle).not.toBeNull();
       await act(async () => alwaysToggle.click());
