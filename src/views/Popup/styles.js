@@ -208,8 +208,11 @@ export const POPUP_STYLES = String.raw`
 .kt-popup-editor-button[data-error="true"] { color: var(--kt-err); }
 .kt-popup-save-button { min-width: 0; height: 40px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 10px; border: 0; border-radius: 12px; background: var(--kt-sf2); color: var(--kt-pri); font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: background .25s, color .25s, box-shadow .25s; }
 .kt-popup-save-button svg { width: 18px; height: 18px; flex: none; }
-.kt-popup-save-button--dirty { background: var(--kt-pri); color: var(--kt-onpri); box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 2px 6px color-mix(in srgb, var(--kt-pri) 20%, transparent); }
-.kt-popup-save-button--saved { color: var(--kt-grn); cursor: default; }
+.kt-popup-save-button:hover:not(:disabled) { background: var(--kt-sf3); }
+.kt-popup-save-button--dirty:hover:not(:disabled) { opacity: .92; }
+.kt-popup-save-button--saved { color: var(--kt-grn); cursor: pointer; }
+.kt-popup-save-button--saved:hover:not(:disabled) { background: var(--kt-sf3); color: var(--kt-grn); }
+.kt-popup-save-button:active:not(:disabled) { transform: scale(0.97); }
 .kt-popup-save-button--error { background: var(--kt-errc); color: var(--kt-onerrc); }
 .kt-popup-save-button[aria-busy="true"] { cursor: progress; }
 .kt-popup-dirty-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 50%; background: var(--kt-pri); box-shadow: 0 0 0 2px var(--kt-sf0); pointer-events: none; }

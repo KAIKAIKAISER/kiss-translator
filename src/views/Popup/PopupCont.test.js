@@ -1914,8 +1914,25 @@ describe("PopupCont capability parity", () => {
       expect(save.getAttribute("data-save-status")).toBe("saved");
       await act(async () => completeInitialRead([{ pattern: "*" }]));
       expect(save.textContent).toContain("popup_saved");
-      expect(save.disabled).toBe(true);
+      expect(save.disabled).toBe(false);
       expect(save.getAttribute("data-dirty-count")).toBe("0");
+    } finally {
+      view.cleanup();
+    }
+  });
+
+  test("allows saving the rule again after a completed save", async () => {
+    saveRule.mockClear();
+    const view = renderPopupCont();
+    try {
+      await flushEffects();
+      const save = view.container.querySelector(".kt-popup-save-button");
+      await act(async () => save.click());
+      expect(saveRule).toHaveBeenCalledTimes(1);
+      expect(save.disabled).toBe(false);
+      await act(async () => save.click());
+      expect(saveRule).toHaveBeenCalledTimes(2);
+      expect(save.disabled).toBe(false);
     } finally {
       view.cleanup();
     }

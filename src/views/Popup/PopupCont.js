@@ -664,13 +664,17 @@ export default function PopupCont({
         ...new Set([...previous, savedRule.pattern]),
       ]);
       setSaveStatus("saved");
+      resetLater("save", () => setSaveStatus("idle"));
     } catch (error) {
       kissLog("save popup rule", error);
-      if (activeRef.current) setSaveStatus("error");
+      if (activeRef.current) {
+        setSaveStatus("error");
+        resetLater("save", () => setSaveStatus("idle"));
+      }
     } finally {
       savePendingRef.current = false;
     }
-  }, [selectedDomain, isContent]);
+  }, [selectedDomain, isContent, resetLater]);
 
   useEffect(() => {
     let active = true;
@@ -1171,8 +1175,7 @@ export default function PopupCont({
             !selectedDomain ||
             saveStatus === "saving" ||
             Boolean(ruleUpdatePending) ||
-            translationTogglePending ||
-            (saved && saveStatus !== "error")
+            translationTogglePending
           }
           aria-busy={saveStatus === "saving"}
           data-dirty-count={dirtyFields.length}
