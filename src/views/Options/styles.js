@@ -117,6 +117,7 @@ export const OPTIONS_STYLES = String.raw`
 
 .kt-options-page .MuiAlert-root { border: 0; border-radius: 12px; background: var(--kt-sf1); color: var(--kt-onv); }
 .kt-options-page .MuiTextField-root { min-width: 0; }
+.kt-options-page .MuiInputBase-input { box-sizing: content-box; }
 .kt-options-page .MuiInputLabel-root.MuiInputLabel-shrink { max-width: calc(125% - 24px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kt-options-page .kt-translation-text-field .MuiInputBase-root { min-height: 128px; align-items: flex-start; overflow: visible; padding: 0; border-radius: 16px; }
 .kt-options-page .kt-translation-text-field .MuiInputBase-inputMultiline { box-sizing: border-box; padding: 30px 58px 54px 16px; border: 0; outline: 0; background: transparent; line-height: 1.55; }

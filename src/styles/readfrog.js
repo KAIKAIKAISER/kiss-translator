@@ -283,11 +283,18 @@ export function createReadFrogThemeOptions(colors, resolvedMode, focusRing) {
       MuiTextField: {
         defaultProps: { variant: "filled" },
       },
+      MuiInputBase: {
+        styleOverrides: {
+          input: {
+            boxSizing: "content-box",
+          },
+        },
+      },
       MuiFilledInput: {
         defaultProps: { disableUnderline: true },
         styleOverrides: {
           root: {
-            minHeight: 44,
+            minHeight: 46,
             overflow: "hidden",
             border: `1px solid ${colors.outlineVariant}`,
             borderRadius: 10,
@@ -311,6 +318,13 @@ export function createReadFrogThemeOptions(colors, resolvedMode, focusRing) {
               boxShadow: `0 0 0 3px color-mix(in srgb, ${colors.error} 20%, transparent)`,
             },
           },
+          input: {
+            boxSizing: "content-box",
+          },
+          inputSizeSmall: {
+            paddingTop: 20,
+            paddingBottom: 5,
+          },
         },
       },
       MuiOutlinedInput: {
@@ -328,7 +342,7 @@ export function createReadFrogThemeOptions(colors, resolvedMode, focusRing) {
       MuiInputLabel: {
         styleOverrides: {
           root: {
-            "&.MuiInputLabel-shrink": {
+            "&.MuiInputLabel-outlined.MuiInputLabel-shrink": {
               backgroundColor: colors.surface,
               padding: "0 4px",
               borderRadius: 4,
@@ -579,6 +593,11 @@ export const READFROG_GLOBAL_CSS = String.raw`
 .kt-m3-root[data-theme-style="readfrog"] *,
 .kt-readfrog-root * {
   box-sizing: border-box;
+}
+
+.kt-m3-root[data-theme-style="readfrog"] .MuiInputBase-input,
+.kt-readfrog-root .MuiInputBase-input {
+  box-sizing: content-box;
 }
 
 .kt-m3-root[data-theme-style="readfrog"] :focus-visible,
