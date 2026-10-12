@@ -898,16 +898,18 @@ export default function TranForm({
                       className={
                         isPlaygound
                           ? "kt-translation-text-field__actions"
-                          : undefined
+                          : "kt-tranbox-field-actions"
                       }
                       direction="row"
+                      alignItems="center"
                       sx={
                         isPlaygound
                           ? undefined
                           : {
                               position: "absolute",
-                              right: 0,
-                              top: 0,
+                              right: 10,
+                              top: -11,
+                              zIndex: 3,
                             }
                       }
                     >

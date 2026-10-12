@@ -674,16 +674,18 @@ export default function TranCont({
                 className={
                   isPlayground
                     ? "kt-translation-text-field__actions"
-                    : undefined
+                    : "kt-tranbox-field-actions"
                 }
                 direction="row"
+                alignItems="center"
                 sx={
                   isPlayground
                     ? undefined
                     : {
                         position: "absolute",
-                        right: 0,
-                        top: 0,
+                        right: 10,
+                        top: -11,
+                        zIndex: 3,
                       }
                 }
               >

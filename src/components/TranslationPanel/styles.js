@@ -48,8 +48,13 @@ export const TRANSLATION_PANEL_STYLES = String.raw`
   .kt-translation-config-row .kt-translation-config__service { flex-basis: 100%; max-width: 100%; }
   .kt-translation-config-row .kt-translation-config__language { flex-basis: 50%; max-width: 50%; }
 }
-.kt-translation-panel__body .MuiFilledInput-root { border-radius: 12px; }
-.kt-translation-panel__body .MuiInputLabel-root { font-size: 12px; }
+.kt-translation-panel__body .MuiFilledInput-root { border-radius: 12px; overflow: visible !important; }
+.kt-translation-panel__body .MuiInputLabel-root { font-size: 11.5px !important; font-weight: 550; background: var(--kt-sf0) !important; padding: 0 5px !important; border-radius: 4px; z-index: 2; top: 0; line-height: 1.2; }
+.kt-translation-panel__body .MuiInputLabel-root.MuiInputLabel-shrink { transform: translate(10px, -9px) scale(0.85) !important; transform-origin: top left; }
+.kt-translation-panel__body .kt-tranbox-field-actions { position: absolute; right: 10px; top: -11px; z-index: 3; display: flex; align-items: center; gap: 2px; background: var(--kt-sf0); border: 1px solid var(--kt-linev); border-radius: 6px; padding: 1px 3px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); }
+.kt-translation-panel__body .kt-tranbox-field-actions .MuiIconButton-root { width: 22px; height: 22px; padding: 2px; color: var(--kt-onv); border-radius: 4px; transition: background-color .15s ease, color .15s ease; }
+.kt-translation-panel__body .kt-tranbox-field-actions .MuiIconButton-root:hover { background: var(--kt-sf1); color: var(--kt-on); }
+.kt-translation-panel__body .kt-tranbox-field-actions svg { width: 14px; height: 14px; }
 .kt-translation-panel__body .MuiInputBase-input { font-size: 12.5px; }
 .kt-translation-panel__body .MuiTabs-root { min-height: 40px; }
 .kt-translation-panel__body .MuiTab-root { min-height: 32px; padding: 5px 13px; font-size: 11.5px; }

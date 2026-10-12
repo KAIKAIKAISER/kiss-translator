@@ -325,6 +325,17 @@ export function createReadFrogThemeOptions(colors, resolvedMode, focusRing) {
           },
         },
       },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            "&.MuiInputLabel-shrink": {
+              backgroundColor: colors.surface,
+              padding: "0 4px",
+              borderRadius: 4,
+            },
+          },
+        },
+      },
       MuiSelect: {
         styleOverrides: {
           select: {
