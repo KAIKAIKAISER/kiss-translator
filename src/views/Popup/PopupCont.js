@@ -72,6 +72,7 @@ const isTouchAction = (action) =>
   action === MSG_TOUCH_TRANSLATE_STATE ||
   action === MSG_TOUCH_TRANSLATE_MODE_SET;
 export const POPUP_RULE_FIELDS = [
+  "transOpen",
   "fromLang",
   "toLang",
   "apiSlug",
@@ -116,9 +117,14 @@ function handleRadioKeyDown(event) {
   buttons[next].click();
 }
 const normalizedValue = (name, value) =>
-  ["transOnly", "hasRichText", "scanAll", "isPlainText", "autoScan"].includes(
-    name
-  )
+  [
+    "transOpen",
+    "transOnly",
+    "hasRichText",
+    "scanAll",
+    "isPlainText",
+    "autoScan",
+  ].includes(name)
     ? enabledValue(value)
     : value;
 
@@ -555,6 +561,10 @@ export default function PopupCont({
       setTranslationError(false);
       const previousTransOpen = ruleRef.current?.transOpen;
       window.clearTimeout(busyTimerRef.current);
+      ruleRef.current = {
+        ...ruleRef.current,
+        transOpen: enabled ? "true" : "false",
+      };
       setRule((previous) => ({
         ...previous,
         transOpen: enabled ? "true" : "false",
@@ -571,6 +581,10 @@ export default function PopupCont({
           enabledValue(confirmed) !== enabled
         )
           throw new Error("Page translation state was not confirmed");
+        ruleRef.current = {
+          ...ruleRef.current,
+          transOpen: enabled ? "true" : "false",
+        };
         setRule((previous) => ({
           ...previous,
           transOpen: enabled ? "true" : "false",
@@ -582,6 +596,7 @@ export default function PopupCont({
       } catch (error) {
         if (!activeRef.current) return;
         kissLog("toggle translation", error);
+        ruleRef.current = { ...ruleRef.current, transOpen: previousTransOpen };
         setRule((previous) => ({ ...previous, transOpen: previousTransOpen }));
         setTranslationBusy(false);
         setTranslationError(true);
@@ -788,6 +803,7 @@ export default function PopupCont({
   const saved = hasSavedRule && !dirtyFields.length;
   const blockedControls = isInCurrentBlacklist || !canTranslatePage;
   const fieldLabels = {
+    transOpen: i18n("popup_always_translate"),
     fromLang: i18n("from_lang"),
     toLang: i18n("to_lang"),
     apiSlug: i18n("translate_service"),
@@ -1108,6 +1124,40 @@ export default function PopupCont({
           ))}
           {dirtyDot("transOnly")}
         </div>
+        <button
+          type="button"
+          className={`kt-popup-option-row kt-popup-option-row--always${isDirty("transOpen") ? " kt-popup-option-row--dirty" : ""}`}
+          role="switch"
+          aria-label={fieldLabels.transOpen}
+          aria-checked={enabledValue(rule?.transOpen)}
+          disabled={blockedControls}
+          onClick={() => {
+            const nextValue = !enabledValue(rule?.transOpen);
+            void putRuleValue("transOpen", String(nextValue));
+            if (nextValue && !translationEnabled) {
+              void handleTransToggle(true);
+            }
+          }}
+        >
+          <span>
+            <TranslateRoundedIcon
+              className="kt-popup-always-icon"
+              aria-hidden="true"
+            />
+            <span>{fieldLabels.transOpen}</span>
+            {isDirty("transOpen") && (
+              <span
+                className="kt-popup-dirty-dot kt-popup-dirty-dot--inline"
+                aria-hidden="true"
+              />
+            )}
+          </span>
+          <span
+            className="kt-popup-switch"
+            data-checked={enabledValue(rule?.transOpen)}
+            aria-hidden="true"
+          />
+        </button>
         {pageOptions.map((name) => (
           <button
             type="button"

@@ -97,6 +97,11 @@ const labels = {
     "Disabled on this site",
     "已在此網站停用",
   ],
+  popup_always_translate: [
+    "总是翻译此网站",
+    "Always translate this site",
+    "總是翻譯此網站",
+  ],
   popup_display_mode: ["显示方式", "Display mode", "顯示方式"],
   popup_bilingual: ["双语对照", "Bilingual", "雙語對照"],
   popup_translation_only: ["仅译文", "Translation only", "僅譯文"],

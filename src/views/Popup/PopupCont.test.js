@@ -2014,7 +2014,7 @@ describe("PopupCont capability parity", () => {
     }
   });
 
-  test("counts only the nine site fields and excludes translation and global settings", async () => {
+  test("counts the ten site fields including always-translate and excludes global settings", async () => {
     const rule = {
       fromLang: "en",
       toLang: "fr",
@@ -2032,10 +2032,15 @@ describe("PopupCont capability parity", () => {
       await flushEffects();
       const save = view.container.querySelector(".kt-popup-save-button");
       view.rerender({
-        rule: { ...rule, transOpen: "true" },
+        rule,
         setting: { blacklist: "other.example" },
       });
       expect(save.getAttribute("data-dirty-count")).toBe("0");
+      view.rerender({
+        rule: { ...rule, transOpen: "true" },
+        setting: { blacklist: "other.example" },
+      });
+      expect(save.getAttribute("data-dirty-count")).toBe("1");
       view.rerender({
         rule: {
           ...rule,
@@ -2051,7 +2056,33 @@ describe("PopupCont capability parity", () => {
           transOpen: "true",
         },
       });
-      expect(save.getAttribute("data-dirty-count")).toBe("9");
+      expect(save.getAttribute("data-dirty-count")).toBe("10");
+    } finally {
+      view.cleanup();
+    }
+  });
+
+  test("toggles always translate for the current site", async () => {
+    const processActions = jest.fn(({ args }) => ({ rule: args }));
+    const view = renderPopupCont(
+      { processActions },
+      { statefulRule: true }
+    );
+    try {
+      await flushEffects();
+      const alwaysToggle = view.container.querySelector(
+        ".kt-popup-option-row--always"
+      );
+      expect(alwaysToggle).not.toBeNull();
+      await act(async () => alwaysToggle.click());
+      const save = view.container.querySelector(".kt-popup-save-button");
+      expect(save.getAttribute("data-dirty-count")).toBe("1");
+      expect(processActions).toHaveBeenCalledWith(
+        expect.objectContaining({
+          action: MSG_TRANS_PUTRULE,
+          args: { transOpen: "true" },
+        })
+      );
     } finally {
       view.cleanup();
     }

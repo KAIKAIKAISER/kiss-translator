@@ -192,6 +192,8 @@ export const POPUP_STYLES = String.raw`
 .kt-popup-display-mode button[aria-checked="true"] { color: var(--kt-on); }
 .kt-popup-option-row { min-width: 0; height: 36px; display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 0 10px 0 12px; border: 0; border-radius: 12px; background: var(--kt-sf2); color: var(--kt-on); font-size: 12px; font-weight: 500; text-align: left; cursor: pointer; }
 .kt-popup-option-row:hover { background: var(--kt-sf3); }
+.kt-popup-option-row--always { grid-column: span 2; height: 38px; font-weight: 600; border: 1px solid var(--kt-sf4); }
+.kt-popup-always-icon { width: 17px; height: 17px; flex: none; color: var(--kt-pri); }
 .kt-popup-option-row > span:first-child { min-width: 0; display: flex; align-items: center; gap: 5px; }
 .kt-popup-option-row > span:first-child > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kt-popup-switch { position: relative; width: 34px; height: 20px; display: inline-block; flex: none; border: 1.5px solid var(--kt-line); border-radius: 999px; background: var(--kt-sf4); transition: background .25s, border-color .25s; }
