@@ -79,11 +79,12 @@ export function getMaxTranBoxY(contentHeight) {
 
 /**
  * 根据待翻译文本长短计算自适应的翻译框内容尺寸 { w, h }
- * - 文本短（如单字、单词、短语，<= 24 字符）：紧凑窗口（360px 宽，240px 预估最大高），配合 autoHeight 紧密贴合内容
- * - 文本中短（单句，25 ~ 70 字符）：适中窗口（420px 宽，280px 预估最大高）
- * - 文本中等（2-3 句，71 ~ 160 字符）：中等窗口（480px 宽，350px 预估最大高）
- * - 文本较长（单段，161 ~ 320 字符）：宽窗口（560px 宽，430px 预估最大高）
- * - 文本很长（多段，> 320 字符）：大窗口（640px 宽，510px 预估最大高）
+ * - 单词/短词组 (<= 30 字符)：精致小卡片 (320px 宽，180px 预估高)
+ * - 短句 (31 ~ 90 字符)：轻量窗口 (360px 宽，220px 预估高)
+ * - 1~2 句话 (91 ~ 220 字符)：适中紧凑窗口 (400px 宽，270px 预估高)
+ * - 中小段落 (221 ~ 450 字符)：中等窗口 (440px 宽，320px 预估高)
+ * - 完整段落 (451 ~ 800 字符)：阅读窗口 (480px 宽，380px 预估高)
+ * - 长文本 (> 800 字符)：上限封顶窗口 (520px 宽，440px 预估高，配合滚动条阅读)
  * @param {string} text 待翻译文本
  * @param {Object} [options]
  * @param {boolean} [options.simpleStyle] 是否极简风格
@@ -105,36 +106,56 @@ export function getAdaptiveTranBoxSize(text = "", options = {}) {
     }
   }
 
-  let w = 360;
-  let h = 240;
+  let w = 320;
+  let h = 180;
 
-  if (effectiveLen <= 24) {
+  if (effectiveLen <= 30) {
+    w = 320;
+    h = 180;
+  } else if (effectiveLen <= 90) {
     w = 360;
-    h = 240;
-  } else if (effectiveLen <= 70) {
-    w = 420;
-    h = 280;
-  } else if (effectiveLen <= 160) {
+    h = 220;
+  } else if (effectiveLen <= 220) {
+    w = 400;
+    h = 270;
+  } else if (effectiveLen <= 450) {
+    w = 440;
+    h = 320;
+  } else if (effectiveLen <= 800) {
     w = 480;
-    h = 350;
-  } else if (effectiveLen <= 320) {
-    w = 560;
-    h = 430;
+    h = 380;
   } else {
-    w = 640;
-    h = 510;
+    w = 520;
+    h = 440;
   }
 
   if (simpleStyle) {
-    w = Math.min(w, 480);
-    h = Math.min(h, 400);
+    if (effectiveLen <= 30) {
+      w = 280;
+      h = 140;
+    } else if (effectiveLen <= 90) {
+      w = 320;
+      h = 170;
+    } else if (effectiveLen <= 220) {
+      w = 350;
+      h = 210;
+    } else if (effectiveLen <= 450) {
+      w = 390;
+      h = 260;
+    } else {
+      w = 430;
+      h = 320;
+    }
   }
 
   const maxW = getMaxTranBoxContentWidth();
   const maxH = getMaxTranBoxContentHeight();
 
+  const minW = simpleStyle ? 260 : 300;
+  const minH = simpleStyle ? 120 : 160;
+
   return {
-    w: Math.max(320, Math.min(w, maxW)),
-    h: Math.max(180, Math.min(h, maxH)),
+    w: Math.max(minW, Math.min(w, maxW)),
+    h: Math.max(minH, Math.min(h, maxH)),
   };
 }

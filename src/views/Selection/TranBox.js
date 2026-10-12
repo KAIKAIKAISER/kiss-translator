@@ -95,7 +95,9 @@ export default function TranBox(props) {
       size={boxSize}
       setSize={setBoxSize}
       setPosition={setBoxPosition}
-      autoHeight={tranboxSetting?.autoHeight !== false}
+      autoHeight={
+        adaptiveSizeEnabled ? true : tranboxSetting?.autoHeight !== false
+      }
       onManualResize={() => {
         isManualResizedRef.current = true;
       }}
