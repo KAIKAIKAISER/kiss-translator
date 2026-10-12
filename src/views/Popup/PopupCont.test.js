@@ -2066,7 +2066,7 @@ describe("PopupCont capability parity", () => {
   test("toggles always translate for the current site", async () => {
     const processActions = jest.fn(({ args }) => ({ rule: args }));
     const view = renderPopupCont(
-      { processActions },
+      { rule: { transOpen: "false" }, processActions },
       { statefulRule: true }
     );
     try {
