@@ -147,7 +147,8 @@ export const DEFAULT_TRANBOX_SETTING = {
   hideClickAway: false, // Hide the panel when focus leaves it (false pins it).
   simpleStyle: false, // 是否启用极简无边框设计风格
   followSelection: false, // 翻译结果框位置是否贴紧选中文本中心
-  autoHeight: false, // 翻译结果框高度是否自适应其文本内容长度
+  autoHeight: true, // 翻译结果框高度是否自适应其文本内容长度（默认开启，随内容伸缩）
+  adaptiveSize: true, // 划词翻译窗口是否根据文本长短自适应大小（默认开启）
   triggerMode: OPT_TRANBOX_TRIGGER_CLICK, // 划词触发翻译的行为模式
   btnPositionMode: OPT_TRANBOX_BTN_POSITION_FIXED, // 划词后弹出按钮的定位模式
   tranboxInteractMode: "-", // 翻译框内交互模式（"-"表示禁用）

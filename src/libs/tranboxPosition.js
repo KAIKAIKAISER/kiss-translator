@@ -76,3 +76,65 @@ export function getMaxTranBoxY(contentHeight) {
     getTranBoxViewportHeight() - getTranBoxOuterHeight(contentHeight)
   );
 }
+
+/**
+ * 根据待翻译文本长短计算自适应的翻译框内容尺寸 { w, h }
+ * - 文本短（如单字、单词、短语，<= 24 字符）：紧凑窗口（360px 宽，240px 预估最大高），配合 autoHeight 紧密贴合内容
+ * - 文本中短（单句，25 ~ 70 字符）：适中窗口（420px 宽，280px 预估最大高）
+ * - 文本中等（2-3 句，71 ~ 160 字符）：中等窗口（480px 宽，350px 预估最大高）
+ * - 文本较长（单段，161 ~ 320 字符）：宽窗口（560px 宽，430px 预估最大高）
+ * - 文本很长（多段，> 320 字符）：大窗口（640px 宽，510px 预估最大高）
+ * @param {string} text 待翻译文本
+ * @param {Object} [options]
+ * @param {boolean} [options.simpleStyle] 是否极简风格
+ * @returns {{ w: number, h: number }}
+ */
+export function getAdaptiveTranBoxSize(text = "", options = {}) {
+  const rawText = typeof text === "string" ? text.trim() : "";
+  const { simpleStyle = false } = options;
+
+  let effectiveLen = 0;
+  for (let i = 0; i < rawText.length; i++) {
+    const code = rawText.charCodeAt(i);
+    if (code === 10) {
+      effectiveLen += 15;
+    } else if (code > 255) {
+      effectiveLen += 2;
+    } else {
+      effectiveLen += 1;
+    }
+  }
+
+  let w = 360;
+  let h = 240;
+
+  if (effectiveLen <= 24) {
+    w = 360;
+    h = 240;
+  } else if (effectiveLen <= 70) {
+    w = 420;
+    h = 280;
+  } else if (effectiveLen <= 160) {
+    w = 480;
+    h = 350;
+  } else if (effectiveLen <= 320) {
+    w = 560;
+    h = 430;
+  } else {
+    w = 640;
+    h = 510;
+  }
+
+  if (simpleStyle) {
+    w = Math.min(w, 480);
+    h = Math.min(h, 400);
+  }
+
+  const maxW = getMaxTranBoxContentWidth();
+  const maxH = getMaxTranBoxContentHeight();
+
+  return {
+    w: Math.max(320, Math.min(w, maxW)),
+    h: Math.max(180, Math.min(h, maxH)),
+  };
+}

@@ -34,6 +34,7 @@ function Pointer({
   minSize,
   maxSize,
   getMaxPositionY,
+  onManualResize,
   ...props
 }) {
   // Store the pointer coordinates, position, and size at the start of a drag or resize.
@@ -149,6 +150,9 @@ function Pointer({
         y: limitNumber(y, 0, getMaxPositionY(nextSize.h)),
       });
       setSize(nextSize);
+      if (direction !== "Header") {
+        onManualResize?.();
+      }
     }
   }
 
@@ -212,6 +216,7 @@ export default function DraggableResizable({
   onChangeSize,
   onChangePosition,
   autoHeight,
+  onManualResize,
   ...props
 }) {
   // Width of the resize handles in pixels.
@@ -259,6 +264,7 @@ export default function DraggableResizable({
     minSize,
     maxSize,
     getMaxPositionY,
+    onManualResize,
   };
 
   return (

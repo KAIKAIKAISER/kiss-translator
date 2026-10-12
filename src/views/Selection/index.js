@@ -64,6 +64,7 @@ export default function Selection({
     boxOffsetX,
     boxOffsetY,
     boxSize,
+    setBoxSize,
     setBoxPosition,
   });
 

@@ -105,7 +105,8 @@ export default function Tranbox() {
     hideClickAway = false,
     simpleStyle = false,
     followSelection = false,
-    autoHeight = false,
+    autoHeight = true,
+    adaptiveSize = true,
     triggerMode = OPT_TRANBOX_TRIGGER_CLICK,
     tranboxInteractMode = "-",
     btnPositionMode = OPT_TRANBOX_BTN_POSITION_FIXED,
@@ -494,8 +495,24 @@ export default function Tranbox() {
                   label={i18n("tranbox_auto_height")}
                   onChange={handleChange}
                 >
-                  <MenuItem value={false}>{i18n("disable")}</MenuItem>
                   <MenuItem value={true}>{i18n("enable")}</MenuItem>
+                  <MenuItem value={false}>{i18n("disable")}</MenuItem>
+                </TextField>
+              </Grid>
+
+              {/* Adapt the panel size to text length (smaller for short text, larger for long text). */}
+              <Grid item xs={12} sm={12} md={6} lg={6}>
+                <TextField
+                  fullWidth
+                  select
+                  size="small"
+                  name="adaptiveSize"
+                  value={adaptiveSize}
+                  label={i18n("tranbox_adaptive_size")}
+                  onChange={handleChange}
+                >
+                  <MenuItem value={true}>{i18n("enable")}</MenuItem>
+                  <MenuItem value={false}>{i18n("disable")}</MenuItem>
                 </TextField>
               </Grid>
 

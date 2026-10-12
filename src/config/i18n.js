@@ -6284,6 +6284,15 @@ export const I18N = {
     tr: `Çeviri Kutusu Uyarlanabilir Yükseklik`,
     vi: "Hộp dịch tự động chiều cao",
   },
+  tranbox_adaptive_size: {
+    zh: `翻译框根据文本长短自适应大小`,
+    en: `Adaptive translation box size based on text length`,
+    zh_TW: `翻譯框根據文字長短自適應大小`,
+    ja: `テキスト長に応じて翻訳ボックスサイズを自動調整`,
+    ko: `텍스트 길이에 따라 번역 상자 크기 자동 조절`,
+    tr: `Metin uzunluğuna göre çeviri kutusu boyutunu otomatik uyarla`,
+    vi: "Tự động điều chỉnh kích thước hộp dịch theo độ dài văn bản",
+  },
   field_resize_height: {
     zh: `拖动调整高度`,
     en: `Drag to adjust height`,

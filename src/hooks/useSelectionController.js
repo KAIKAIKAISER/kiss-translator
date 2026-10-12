@@ -22,6 +22,7 @@ import {
   getMaxTranBoxX,
   getMaxTranBoxY,
   getTranBoxOuterHeight,
+  getAdaptiveTranBoxSize,
 } from "../libs/tranboxPosition";
 
 const TRANBTN_SIZE = 40;
@@ -239,6 +240,7 @@ export default function useSelectionController({
   boxOffsetX,
   boxOffsetY,
   boxSize,
+  setBoxSize,
   setBoxPosition,
 }) {
   const {
@@ -339,6 +341,18 @@ export default function useSelectionController({
     (snapshot) => {
       if (!snapshot?.text) return;
 
+      if (tranboxSetting?.adaptiveSize !== false && setBoxSize) {
+        const targetSize = getAdaptiveTranBoxSize(snapshot.text, {
+          simpleStyle: tranboxSetting?.simpleStyle,
+        });
+        if (
+          targetSize &&
+          (boxSize?.w !== targetSize.w || boxSize?.h !== targetSize.h)
+        ) {
+          setBoxSize(targetSize);
+        }
+      }
+
       pendingSelectionRef.current = snapshot;
       setSelText(snapshot.text);
       setTextContext(snapshot.context);
@@ -346,7 +360,7 @@ export default function useSelectionController({
       setText(snapshot.text);
       setShowBox(true);
     },
-    [setShowBox]
+    [setShowBox, tranboxSetting, setBoxSize, boxSize]
   );
 
   const handleOpenTranbox = useCallback(
@@ -437,8 +451,26 @@ export default function useSelectionController({
       }
 
       if (snapshot.rect && followSelection) {
+        const targetSize =
+          tranboxSetting?.adaptiveSize !== false
+            ? getAdaptiveTranBoxSize(snapshot.text, {
+                simpleStyle: tranboxSetting?.simpleStyle,
+              })
+            : boxSize;
+        if (
+          setBoxSize &&
+          targetSize &&
+          (boxSize?.w !== targetSize.w || boxSize?.h !== targetSize.h)
+        ) {
+          setBoxSize(targetSize);
+        }
         setBoxPosition(
-          getFollowBoxPosition(snapshot.rect, boxOffsetX, boxOffsetY, boxSize)
+          getFollowBoxPosition(
+            snapshot.rect,
+            boxOffsetX,
+            boxOffsetY,
+            targetSize || boxSize
+          )
         );
       }
 
@@ -493,7 +525,9 @@ export default function useSelectionController({
       boxOffsetY,
       commitSelectionSnapshot,
       boxSize,
+      setBoxSize,
       setBoxPosition,
+      tranboxSetting,
       shouldSuppressSelection,
       setShowBox,
     ]
@@ -576,8 +610,26 @@ export default function useSelectionController({
     selectionRootRef.current = document;
 
     if (snapshot.rect && followSelection) {
+      const targetSize =
+        tranboxSetting?.adaptiveSize !== false
+          ? getAdaptiveTranBoxSize(snapshot.text, {
+              simpleStyle: tranboxSetting?.simpleStyle,
+            })
+          : boxSize;
+      if (
+        setBoxSize &&
+        targetSize &&
+        (boxSize?.w !== targetSize.w || boxSize?.h !== targetSize.h)
+      ) {
+        setBoxSize(targetSize);
+      }
       setBoxPosition(
-        getFollowBoxPosition(snapshot.rect, boxOffsetX, boxOffsetY, boxSize)
+        getFollowBoxPosition(
+          snapshot.rect,
+          boxOffsetX,
+          boxOffsetY,
+          targetSize || boxSize
+        )
       );
     }
 
@@ -587,7 +639,9 @@ export default function useSelectionController({
     boxOffsetX,
     boxOffsetY,
     setBoxPosition,
+    setBoxSize,
     boxSize,
+    tranboxSetting,
     createSelectionSnapshot,
     commitSelectionSnapshot,
     setShowBox,
