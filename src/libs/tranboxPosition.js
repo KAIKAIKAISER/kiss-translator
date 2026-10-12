@@ -78,13 +78,10 @@ export function getMaxTranBoxY(contentHeight) {
 }
 
 /**
- * 根据待翻译文本长短计算自适应的翻译框内容尺寸 { w, h }
- * - 单词/短词组 (<= 30 字符)：精致小卡片 (320px 宽，180px 预估高)
- * - 短句 (31 ~ 90 字符)：轻量窗口 (360px 宽，220px 预估高)
- * - 1~2 句话 (91 ~ 220 字符)：适中紧凑窗口 (400px 宽，270px 预估高)
- * - 中小段落 (221 ~ 450 字符)：中等窗口 (440px 宽，320px 预估高)
- * - 完整段落 (451 ~ 800 字符)：阅读窗口 (480px 宽，380px 预估高)
- * - 长文本 (> 800 字符)：上限封顶窗口 (520px 宽，440px 预估高，配合滚动条阅读)
+ * 检测待翻译文本的体量（字符数、语言、段落结构），动态计算最匹配的翻译框尺寸 { w, h }
+ * - 宽度：从单词卡片（280px）随着文本长度平滑扩展至舒适阅读面（520px~560px）
+ * - 高度：根据文本分段、排版折行行数、原文+译文所需像素精准估算，在视口安全范围内自然撑开
+ * - 短文本紧致无多余留白，长文本自动长高舒展呈现，杜绝内层截断挤压与多重滚动条
  * @param {string} text 待翻译文本
  * @param {Object} [options]
  * @param {boolean} [options.simpleStyle] 是否极简风格
@@ -94,68 +91,84 @@ export function getAdaptiveTranBoxSize(text = "", options = {}) {
   const rawText = typeof text === "string" ? text.trim() : "";
   const { simpleStyle = false } = options;
 
-  let effectiveLen = 0;
-  for (let i = 0; i < rawText.length; i++) {
-    const code = rawText.charCodeAt(i);
-    if (code === 10) {
-      effectiveLen += 15;
-    } else if (code > 255) {
-      effectiveLen += 2;
-    } else {
-      effectiveLen += 1;
-    }
+  if (!rawText) {
+    return {
+      w: simpleStyle ? 280 : 320,
+      h: simpleStyle ? 120 : 180,
+    };
   }
 
-  let w = 320;
-  let h = 180;
+  // 分析文本特征：字符数、段落数、中西文比例
+  const paragraphs = rawText.split(/\r?\n/).filter(Boolean);
+  const paragraphCount = Math.max(1, paragraphs.length);
+  const totalLength = rawText.length;
 
-  if (effectiveLen <= 30) {
-    w = 320;
-    h = 180;
-  } else if (effectiveLen <= 90) {
-    w = 360;
-    h = 220;
-  } else if (effectiveLen <= 220) {
-    w = 400;
-    h = 270;
-  } else if (effectiveLen <= 450) {
-    w = 440;
-    h = 320;
-  } else if (effectiveLen <= 800) {
-    w = 480;
-    h = 380;
+  let cjkCount = 0;
+  for (let i = 0; i < totalLength; i++) {
+    if (rawText.charCodeAt(i) > 255) cjkCount++;
+  }
+  const isMainlyCjk = cjkCount / totalLength > 0.4;
+
+  // 1. 动态宽度计算：根据文本实际体量平滑扩展，而非生硬阶梯跳变
+  let w;
+  if (totalLength <= 20 && paragraphCount === 1) {
+    w = 300;
+  } else if (totalLength <= 60) {
+    w = 330 + Math.round((totalLength - 20) * 1.25);
+  } else if (totalLength <= 180) {
+    w = 380 + Math.round((totalLength - 60) * 0.42);
+  } else if (totalLength <= 450) {
+    w = 430 + Math.round((totalLength - 180) * 0.3);
   } else {
-    w = 520;
-    h = 440;
+    w = 510 + Math.min(50, Math.round((totalLength - 450) * 0.08));
   }
 
   if (simpleStyle) {
-    if (effectiveLen <= 30) {
-      w = 280;
-      h = 140;
-    } else if (effectiveLen <= 90) {
-      w = 320;
-      h = 170;
-    } else if (effectiveLen <= 220) {
-      w = 350;
-      h = 210;
-    } else if (effectiveLen <= 450) {
-      w = 390;
-      h = 260;
-    } else {
-      w = 430;
-      h = 320;
-    }
+    w = Math.max(260, Math.round(w * 0.88));
   }
+
+  // 2. 动态高度计算：基于物理折行行数与控件像素精细测量
+  const paddingW = simpleStyle ? 24 : 44;
+  const contentW = Math.max(200, w - paddingW);
+  const charsPerLine = isMainlyCjk
+    ? Math.max(12, Math.floor(contentW / 14))
+    : Math.max(25, Math.floor(contentW / 7.6));
+
+  // 计算原文所占物理行数
+  let sourceLines = 0;
+  for (const p of (paragraphs.length ? paragraphs : [rawText])) {
+    sourceLines += Math.max(1, Math.ceil(p.length / charsPerLine));
+  }
+
+  // 预估译文所占物理行数
+  const targetLines = isMainlyCjk
+    ? Math.max(1, Math.ceil(sourceLines * 1.15))
+    : Math.max(1, Math.ceil(sourceLines * 0.85));
+
+  const lineHeight = 21;
+  const chromeHeader = 56;
+  const controlsHeight = simpleStyle ? 8 : 68;
+  const sourceBoxHeight = simpleStyle
+    ? 0
+    : Math.min(sourceLines * lineHeight + 36, 190);
+  const targetBoxHeight = targetLines * lineHeight + 42;
+
+  // 实际需要的内容高度
+  const neededContentHeight =
+    controlsHeight + sourceBoxHeight + targetBoxHeight + 24;
+
+  // 结合当前视口安全边界（避免弹窗溢出屏幕底部）
+  const viewportH = getTranBoxViewportHeight();
+  const maxSafeContentH = Math.max(240, viewportH - chromeHeader - 60);
+
+  const minH = simpleStyle ? 120 : 160;
+  const h = Math.max(minH, Math.min(neededContentHeight, maxSafeContentH));
 
   const maxW = getMaxTranBoxContentWidth();
   const maxH = getMaxTranBoxContentHeight();
 
-  const minW = simpleStyle ? 260 : 300;
-  const minH = simpleStyle ? 120 : 160;
-
   return {
-    w: Math.max(minW, Math.min(w, maxW)),
+    w: Math.max(simpleStyle ? 260 : 280, Math.min(w, maxW)),
     h: Math.max(minH, Math.min(h, maxH)),
   };
 }

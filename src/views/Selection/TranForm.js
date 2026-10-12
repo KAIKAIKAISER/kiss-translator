@@ -861,7 +861,7 @@ export default function TranForm({
               multiline
               inputRef={setInputRef}
               minRows={isPlaygound ? 4 : 1}
-              maxRows={10}
+              maxRows={isPlaygound ? 10 : 8}
               inputProps={{
                 className: "kt-resizable-textarea",
                 style: {

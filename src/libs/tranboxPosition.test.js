@@ -135,29 +135,31 @@ describe("translation box viewport bounds", () => {
       expect(emptySize.h).toBe(180);
 
       const wordSize = getAdaptiveTranBoxSize("apple");
-      expect(wordSize.w).toBe(320);
-      expect(wordSize.h).toBe(180);
+      expect(wordSize.w).toBe(300);
+      expect(wordSize.h).toBe(212);
     });
 
-    test("returns medium dimensions for sentences", () => {
+    test("dynamically scales width and height for sentence text", () => {
       const sentence = "This is a quick demonstration sentence.";
       const size = getAdaptiveTranBoxSize(sentence);
-      expect(size.w).toBe(360);
-      expect(size.h).toBe(220);
+      expect(size.w).toBe(354);
+      expect(size.h).toBe(212);
     });
 
-    test("returns compact dimensions for 1-2 sentence text", () => {
+    test("dynamically expands height and width for multi-paragraph long text", () => {
       const longText =
-        "Artificial intelligence and machine learning technologies have grown tremendously over recent years, powering translation and contextual understanding across diverse platforms and applications globally.";
+        "Artificial intelligence and machine learning technologies have grown tremendously over recent years.\n\n" +
+        "They now power intelligent translations across multilingual documents and platforms globally.";
       const size = getAdaptiveTranBoxSize(longText);
-      expect(size.w).toBe(400);
-      expect(size.h).toBe(270);
+      expect(size.w).toBeGreaterThanOrEqual(400);
+      expect(size.h).toBeGreaterThanOrEqual(280);
     });
 
     test("caps maximum width in simpleStyle mode", () => {
       const veryLongText = "A".repeat(500);
       const size = getAdaptiveTranBoxSize(veryLongText, { simpleStyle: true });
-      expect(size.w).toBeLessThanOrEqual(440);
+      expect(size.w).toBeLessThanOrEqual(480);
+      expect(size.h).toBeLessThanOrEqual(600);
     });
   });
 });

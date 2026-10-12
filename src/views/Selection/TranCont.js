@@ -620,7 +620,7 @@ export default function TranCont({
         multiline
         inputRef={resultHeightLock.textareaRef}
         minRows={isPlayground ? 4 : undefined}
-        maxRows={10}
+        maxRows={isPlayground ? 10 : 30}
         inputProps={{
           className: "kt-resizable-textarea",
           style: {
