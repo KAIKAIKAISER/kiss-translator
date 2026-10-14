@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import DraggableResizable from "./DraggableResizable";
 import TranslationPanelHeader from "../../components/TranslationPanel/Header";
 import TranslationPanelContent from "../../components/TranslationPanel/Content";
 import { MSG_OPEN_SEPARATE_WINDOW } from "../../config/msg";
+import { resolveApiPromptList, withScenePrompt } from "../../config";
 import { sendBgMsg } from "../../libs/msg";
 import { isExt } from "../../libs/client";
 import { isValidWord } from "../../libs/utils";
@@ -37,6 +39,7 @@ export default function TranBox(props) {
     translateVariants,
     parseLatex,
     selectionContext,
+    subtitleSetting,
   } = props;
 
   const panelRef = useTranboxFocus({
@@ -88,6 +91,23 @@ export default function TranBox(props) {
     realApiSlugs = [];
   }
 
+  const resolvedTransApis = useMemo(() => {
+    if (!transApis) return [];
+    const withPrompt = transApis.map((api) =>
+      withScenePrompt(api, tranboxSetting)
+    );
+    return resolveApiPromptList(
+      withPrompt,
+      prompts,
+      subtitleSetting
+    );
+  }, [
+    transApis,
+    tranboxSetting,
+    prompts,
+    subtitleSetting,
+  ]);
+
   return showBox ? (
     <DraggableResizable
       panelRef={panelRef}
@@ -117,6 +137,7 @@ export default function TranBox(props) {
       onClick={(e) => e.stopPropagation()}
     >
       <TranslationPanelContent
+        ttsApiSlug={tranboxSetting.ttsApiSlug || ""}
         simpleStyle={simpleStyle}
         text={text}
         setText={setText}
@@ -125,7 +146,7 @@ export default function TranBox(props) {
         fromLang={tranboxSetting.fromLang}
         toLang={tranboxSetting.toLang}
         toLang2={tranboxSetting.toLang2}
-        transApis={transApis}
+        transApis={resolvedTransApis}
         prompts={prompts}
         langDetector={langDetector}
         translateVariants={translateVariants}
@@ -139,3 +160,4 @@ export default function TranBox(props) {
     </DraggableResizable>
   ) : null;
 }
+
